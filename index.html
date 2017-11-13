@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/style.css" />
+	</head>
+
+	<body>
+		<div class="loginWrap">
+			<div class="login_title">系统登录</div>
+			<div class="login_input">
+				<input type="text" class="user" placeholder="请输入用户名" value="user1" />
+				<img src="img/icon_photo.png" class="login_icon" />
+			</div>
+			<div class="login_input">
+				<input type="text" class="pwd" placeholder="请输入密码" value="111111" />
+				<img src="img/icon_psd.png" class="login_icon" />
+			</div>
+			<div class="login_btn" onclick="login()">登录</div>
+		</div>
+		<div class="container">
+			<div class="container_header">
+				<img src="img/icon_logo.png" class="container_logo" />
+			</div>
+			<div class="left_menu_wrap">
+				<div class="header">
+					<img src="img/icon_header.png" />
+					<div class="loginName">
+						您好，
+						<a class="login_name"></a>
+					</div>
+				</div>
+				<div id="loadMenuWrap">
+					<!--<div class="itemMenu" onclick="menu(this,'car')">
+						<img class="item" src="img/icon_car.png" />
+						<div class="item itemMenuName">车辆管理</div>
+						<img class="item" src="img/icon_bottom.png" />
+					</div>
+					<div class="itemMenu_car">
+						<div class="itemMenu" onclick="itemMenu_child(this,'car')">
+							<img class="item item_child" src="img/icon_info.png" />
+							<div class="item itemMenuName">车辆信息</div>
+						</div>
+						<div class="itemMenu" onclick="itemMenu_child(this)">
+							<img class="item item_child" src="img/icon_eye.png" />
+							<div class="item itemMenuName">车辆监控</div>
+						</div>
+					</div>
+					<div class="itemMenu" onclick="menu(this,'device')">
+						<img class="item" src="img/icon_pc.png" />
+						<div class="item itemMenuName">终端管理</div>
+					</div>
+					<div class="itemMenu">
+						<img class="item" src="img/icon_file.png" />
+						<div class="item itemMenuName">数据管理</div>
+						<img class="item" src="img/icon_bottom.png" />
+					</div>
+					<div class="itemMenu" onclick="menu(this,'system')">
+						<img class="item" src="img/icon_setting.png" />
+						<div class="item itemMenuName">系统管理</div>
+					</div>-->
+				</div>
+			</div>
+			<div class="right_content">
+				<div class="info_top">
+					<div class="info_title">设备信息</div>
+					<div class="info_action">
+						<div class="btns" onclick="add()">新增</div>
+						<div class="btns">导出</div>
+						<div class="btns">更多</div>
+					</div>
+				</div>
+				<div class="result">
+					<div class="searchWrap">
+						<select class="search_condition">
+
+						</select>
+						<input type="text" class="keyWord" placeholder="请输入关键词" />
+						<div class="search_btn" onclick="searchByKey()">搜索</div>
+					</div>
+					<div class="tabWrap">
+						<table border="1" id='Table'>
+							
+						</table>
+					</div>
+				</div>
+				<div class="edit">
+					<!--车辆管理-->
+					<div class="editItemWrap deviceManage">
+						<form id="deviceManageForm">
+							<div class="itemWrap">
+								<div class="itemTitle">设备编号：</div>
+								<input type="text" name="number" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">设备类型：</div>
+								<input type="text" name="device_type" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">品牌：</div>
+								<input type="text" name="brand" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">型号：</div>
+								<input type="text" name="model" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">厂商：</div>
+								<input type="text" name="factory" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">终端手机号：</div>
+								<input type="text" name="mobile" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">车牌：</div>
+								<input type="text" name="plate_number" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">设备状态：</div>
+								<!--<input type="text"name="device_state" />-->
+								<select name="device_state" class="device_state">
+
+								</select>
+							</div>
+							<div class="btns">
+								<div class="btn save"  onclick="save('device')">保存</div>
+								<div class="btn cancel" onclick="cancel('device')">取消</div>
+							</div>
+						</form>
+					</div>
+					<!--设备管理-->
+					<div class="editItemWrap carManage">
+						<form id="carManageForm">
+							<div class="itemWrap">
+								<div class="itemTitle">车牌号码：</div>
+								<input type="text" name="number" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">排放标准：</div>
+								<input type="text" name="emission" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">使用类型：</div>
+								<input type="text" name="purpose" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">归属地：</div>
+								<input type="text" name="dependency" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">车辆类型：</div>
+								<input type="text" name="truck_type" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">车型：</div>
+								<input type="text" name="model" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">发动机型号：</div>
+								<input type="text" name="engine_type" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">排量：</div>
+								<input type="text" name="displacement" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">所有人：</div>
+								<input type="text" name="owner" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">联系电话：</div>
+								<input type="text" name="phone" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">注册里程数：</div>
+								<input type="text" name="register_ligeal" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">注册时间：</div>
+								<input type="date" name="register_date" style="width: 146px;" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">动力类型：</div>
+								<input type="text" name="power_type" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">车辆状态：</div>
+								<!--<input type="text" name="truck_state"/>-->
+								<select class="truck_state" name="truck_state">
+
+								</select>
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">配件编号：</div>
+								<input type="text" name="parts_number" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">品牌：</div>
+								<input type="text" name="brand" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">终端厂商：</div>
+								<input type="text" name="device_factory" />
+							</div>
+							<div class="itemWrap">
+								<div class="itemTitle">操作：</div>
+								<input type="text" name="op" />
+							</div>
+							<div class="btns">
+								<div class="btn save" onclick="save('car')" url=''>保存</div>
+								<div class="btn cancel" onclick="cancel('car')">取消</div>
+							</div>
+						</form>
+					</div>
+					<!--系统管理-->
+					<div class="editItemWrap systemManage" style="width: 900px;">
+						<form id="systemManageForm">
+							<div class="itemWrap">
+								<div class="itemTitle" style="text-align: left;width: 70px;">角色名称：</div>
+								<input type="text" name="" style="padding-left: 10px;width: 100px;" />
+							</div>
+							<br />
+							<div class="">
+								<div class="itemTitle" style="color: #666;font-size: 14px;text-align: left;width: 70px;margin-bottom: 10px;">权限管理：</div>
+								<table border="0" cellspacing="0" cellpadding="0" class="border-table" width="90%">
+									<tr>
+										<th>菜单名称</th>
+										<th>权限分配</th>
+										<th>全选</th>
+									</tr>
+									<tr>
+										<td style="white-space:nowrap;word-break:break-all;overflow:hidden;">
+											<span class="folder-open"></span> 车辆管理
+										</td>
+										<td>
+											<span id="rptList_cblActionType_0" class="cbllist">
+												<input id="rptList_cblActionType_0_0_0" type="checkbox" name="rptList$ctl00$cblActionType$0" checked="checked" value="Show">
+												<label for="rptList_cblActionType_0_0_0"> 查看 </label>
+											</span>
+										</td>
+										<td align="center">
+											<input name="checkAll" type="checkbox">
+										</td>
+									</tr>
+									<tr>
+										<td style="white-space:nowrap;word-break:break-all;overflow:hidden;">
+											<span style="display:inline-block;width:0px;"></span><span class="folder-line"></span><span class="folder-open"></span> 车辆信息
+										</td>
+										<td>
+											<span id="rptList_cblActionType_4" class="cbllist">
+												<input id="rptList_cblActionType_4_1_4" type="checkbox" name="rptList$ctl04$cblActionType$1" value="View">
+												<label for="rptList_cblActionType_4_1_4"> 查看 </label>
+												<input id="rptList_cblActionType_4_2_4" type="checkbox" name="rptList$ctl04$cblActionType$2" value="Add">
+												<label for="rptList_cblActionType_4_2_4"> 添加 </label>
+												<input id="rptList_cblActionType_4_3_4" type="checkbox" name="rptList$ctl04$cblActionType$3" value="Edit">
+												<label for="rptList_cblActionType_4_3_4"> 修改 </label>
+												<input id="rptList_cblActionType_4_4_4" type="checkbox" name="rptList$ctl04$cblActionType$4" value="Delete">
+												<label for="rptList_cblActionType_4_4_4"> 删除 </label>
+											</span>
+										</td>
+										<td align="center"><input name="checkAll" type="checkbox"></td>
+									</tr>
+									<tr>
+										<td style="white-space:nowrap;word-break:break-all;overflow:hidden;">
+											<span style="display:inline-block;width:0px;"></span><span class="folder-line"></span><span class="folder-open"></span> 车辆监控
+										</td>
+										<td>
+											<span id="rptList_cblActionType_4" class="cbllist">
+												<input id="rptList_cblActionType_4_1_4" type="checkbox" name="rptList$ctl04$cblActionType$1" value="View">
+												<label for="rptList_cblActionType_4_1_4"> 查看 </label>
+												<input id="rptList_cblActionType_4_2_4" type="checkbox" name="rptList$ctl04$cblActionType$2" value="Add">
+												<label for="rptList_cblActionType_4_2_4"> 添加 </label>
+												<input id="rptList_cblActionType_4_3_4" type="checkbox" name="rptList$ctl04$cblActionType$3" value="Edit">
+												<label for="rptList_cblActionType_4_3_4"> 修改 </label>
+												<input id="rptList_cblActionType_4_4_4" type="checkbox" name="rptList$ctl04$cblActionType$4" value="Delete">
+												<label for="rptList_cblActionType_4_4_4"> 删除 </label>
+											</span>
+										</td>
+										<td align="center"><input name="checkAll" type="checkbox"></td>
+									</tr>
+									<tr>
+										<td style="white-space:nowrap;word-break:break-all;overflow:hidden;">
+											<span class="folder-open"></span> 终端管理
+										</td>
+										<td>
+											<span id="rptList_cblActionType_0" class="cbllist">
+												<input id="rptList_cblActionType_0_0_0" type="checkbox" name="rptList$ctl00$cblActionType$0" checked="checked" value="Show">
+												<label for="rptList_cblActionType_0_0_0"> 查看 </label>
+											</span>
+										</td>
+										<td align="center">
+											<input name="checkAll" type="checkbox">
+										</td>
+									</tr>
+									<tr>
+										<td style="white-space:nowrap;word-break:break-all;overflow:hidden;">
+											<span class="folder-open"></span> 系统管理
+										</td>
+										<td>
+											<span id="rptList_cblActionType_0" class="cbllist">
+												<input id="rptList_cblActionType_0_0_0" type="checkbox" name="rptList$ctl00$cblActionType$0" checked="checked" value="Show">
+												<label for="rptList_cblActionType_0_0_0"> 显示 </label>
+											</span>
+										</td>
+										<td align="center">
+											<input name="checkAll" type="checkbox">
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div class="btns" style="text-align: left;width: 810px;margin-left: 0;margin-top: 10px;">
+								<div class="btn save" style="margin-left: 0;" onclick="save('car')">保存</div>
+								<div class="btn cancel" onclick="cancel('car')">取消</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-self-form.js"></script>
+		<script type="text/javascript" src="js/md5.min.js"></script>
+		<script type="text/javascript" src="js/init.js"></script>
+	</body>
+
+</html>
