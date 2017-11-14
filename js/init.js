@@ -6,26 +6,69 @@ $('.systemManage').css('display', 'none');
 var username = '';
 var realm = 'botron.com';
 var nonce = Math.random().toString(36).substr(2);
-//var domain = 'http://ibook.qik56.com:8088';
-var domain = 'http://192.168.1.88:8098';
+var domain = 'http://ibook.qik56.com:8999';
+//var domain = 'http://192.168.1.88:8098';
 var currentType = ''; //当前选中类型
 var currentEditId = ''; //当前选中id
 var condition = {
-	car: [{ descr: '车牌', code: 'number' }, { descr: '车型', code: 'model' }, { descr: '归属地', code: 'dependency' }, { descr: '使用类型', code: 'purpose' }, { descr: '所有人', code: 'owner' }, { descr: '终端厂商', code: 'device_factory' }],
-	device: [{ descr: '编号', code: 'number' }, { descr: '设备类型', code: 'device_type' }, { descr: '品牌', code: 'brand' }, { descr: '车牌', code: 'plate_number' }, { descr: '厂商', code: 'factory' }]
+	car: [{
+		descr: '车牌',
+		code: 'number'
+	}, {
+		descr: '车型',
+		code: 'model'
+	}, {
+		descr: '归属地',
+		code: 'dependency'
+	}, {
+		descr: '使用类型',
+		code: 'purpose'
+	}, {
+		descr: '所有人',
+		code: 'owner'
+	}, {
+		descr: '终端厂商',
+		code: 'device_factory'
+	}],
+	device: [{
+		descr: '编号',
+		code: 'number'
+	}, {
+		descr: '设备类型',
+		code: 'device_type'
+	}, {
+		descr: '品牌',
+		code: 'brand'
+	}, {
+		descr: '车牌',
+		code: 'plate_number'
+	}, {
+		descr: '厂商',
+		code: 'factory'
+	}]
 }
 var level1 = [];
 var el = null;
+var op_urls = []; //操作类型 0 query 1 update
 //登录
 function login() {
 	username = $('.user').val();
 	var password = md5($('.pwd').val());
-	var ai = { username: username, password: password, realm: realm }
+	var ai = {
+		username: username,
+		password: password,
+		realm: realm
+	}
 	var response = md5(ai.username + "&" + ai.password + "&" + ai.realm + "&" + nonce + "&login");
 	$.ajax({
 		url: domain + '/itruck/login',
 		type: 'get',
-		data: { username: username, nonce: nonce, response: response, realm: realm },
+		data: {
+			username: username,
+			nonce: nonce,
+			response: response,
+			realm: realm
+		},
 		success: function(res) {
 			if(res.statuscode == 200) {
 				$('.loginWrap').css('display', 'none');
@@ -36,7 +79,16 @@ function login() {
 				$.ajax({
 					url: domain + '/ostrich/queryPrivileges',
 					type: 'get',
-					data: { offset: 0, rows: 200, username: username, nonce: nonce, result: '123', rows: 60, offset: 0, role_id: res.role_id },
+					data: {
+						offset: 0,
+						rows: 200,
+						username: username,
+						nonce: nonce,
+						result: '123',
+						rows: 60,
+						offset: 0,
+						role_id: res.role_id
+					},
 					success: function(_res) {
 						if(_res.statuscode == 200) {
 							loadMenu(_res.items); //装在左侧菜单
@@ -45,7 +97,13 @@ function login() {
 							$.ajax({
 								url: domain + '/ostrich/queryConstant',
 								type: 'get',
-								data: { offset: 0, rows: 200, username: username, nonce: nonce, result: '123' },
+								data: {
+									offset: 0,
+									rows: 200,
+									username: username,
+									nonce: nonce,
+									result: '123'
+								},
 								success: function(response) {
 									loadType(response);
 								}
@@ -67,44 +125,52 @@ function loadMenu(data) {
 		if(data[i].level == 1) {
 			level1.push(data[i].name);
 			str += '<div class="itemMenu" onclick="menu(this)" id="' + data[i].name + '">';
-			str += '<img class="item" src="img/icon_car.png" />';
+			if(data[i].name == 'itruck_device_mg') {
+				str += '<img class="item" src="img/icon_setting.png" />';
+			} else if(data[i].name == 'itruck_truck_mg') {
+				str += '<img class="item" src="img/icon_car.png" />';
+			}
 			str += '<div class="item itemMenuName">' + data[i].descr + '</div>';
 			str += '<img class="item" src="img/icon_bottom.png" />';
-			str += '</div><div class="' + data[i].name + '"></div>';
+			str += '</div><div class="' + data[i].name + '" style="display:none"></div>';
 		}
 	}
 	$('#loadMenuWrap').html('');
 	$('#loadMenuWrap').append(str);
 
 }
-
+//装在子菜单
 function loadChildMenu(data) {
 	var str1 = '';
 	for(var n = 0; n < level1.length; n++) {
 		str1 = ''
 		for(var j = 0; j < data.length; j++) {
-		var url_insert='';
-		var url_update='';
-		var url_delete='';
-		var url_query='';
-			for(var m=0;m<data.length;m++){
+			var url_insert = '';
+			var url_update = '';
+			var url_delete = '';
+			var url_query = '';
+			for(var m = 0; m < data.length; m++) {
 				if(data[m].level == 3 && data[m].parent == data[j].name) {
-					if(data[m].name=='query'){
-						url_query=data[m].url;
-					}else if(data[m].name=='insert'){
-						url_insert=data[m].url;
-					}else if(data[m].name=='update'){
-						url_update=data[m].url;
-					}else if(data[m].name=='delete'){
-						url_delete=data[m].url;
+					if(data[m].name == 'query') {
+						url_query = data[m].url;
+					} else if(data[m].name == 'insert') {
+						url_insert = data[m].url;
 					}
-
 				}
 			}
 			if(data[j].level == 2 && data[j].parent == level1[n]) {
 				str1 += '<div class="itemMenu_car">';
-				str1 += '<div class="itemMenu" onclick="itemMenu_child(this)" url_query="'+url_query+'" url_delete="'+url_delete+'" url_insert="'+url_insert+'" url_update="'+url_update+'" name="'+data[j].name+'">';
-				str1 += '<img class="item item_child" src="img/icon_info.png" />';
+				str1 += '<div class="itemMenu" onclick="itemMenu_child(this)" url_query="' + url_query + '" url_insert="' + url_insert + '" name="' + data[j].name + '">';
+				if(data[j].name == "itruck_device_info") {
+					str1 += '<img class="item item_child" src="img/icon_file.png" />';
+				} else if(data[j].name == "itruck_device_monitor") {
+					str1 += '<img class="item item_child" src="img/icon_eye.png" />';
+				} else if(data[j].name == "itruck_truck_info") {
+					str1 += '<img class="item item_child" src="img/icon_info.png" />';
+				} else if(data[j].name == "itruck_truck_monitor") {
+					str1 += '<img class="item item_child" src="img/icon_pc.png" />';
+				}
+
 				str1 += '<div class="item itemMenuName">' + data[j].descr + '</div>';
 				str1 += '</div>';
 			}
@@ -130,6 +196,7 @@ function menu(obj) {
 }
 //点击子菜单
 function itemMenu_child(obj) {
+	//控制菜单样式
 	if(el == null) {
 		el = obj;
 		$(obj).addClass('menu_active');
@@ -138,9 +205,13 @@ function itemMenu_child(obj) {
 		$(obj).addClass('menu_active');
 		el = obj
 	}
-	var url_query = $(obj).attr('url_query');
-	var name = $(obj).attr('name');
-	queryInfo(url_query,name);
+	//保存当前菜单操作的URL
+	op_urls[0] = $(obj).attr('url_query');
+	op_urls[1] = $(obj).attr('url_insert');
+	//save current type
+	currentType = $(obj).attr('name');
+	//query 
+	queryInfo();
 }
 
 //装在类型
@@ -161,20 +232,14 @@ function loadType(res) {
 //新增
 function add() {
 	switch(currentType) {
-		case 'car':
+		case 'itruck_truck_info':
 			$(".carManage").css('display', 'block');
 			$(".deviceManage").css('display', 'none');
 			break;
-		case 'device':
+		case 'itruck_device_info':
 			$(".deviceManage").css('display', 'block');
 			$(".carManage").css('display', 'none');
-			$(".carManage").css('display', 'none');
 			break;
-//		case 'system':
-//			$(".systemManage").css('display', 'block');
-//			$(".carManage").css('display', 'none');
-//			$(".deviceManage").css('display', 'none');
-//			break;
 		default:
 			break;
 	}
@@ -185,30 +250,37 @@ function add() {
 
 //编辑
 function editManage(id) {
-	var url = getQueryUrl(currentType);
 	currentEditId = id;
-	var data = { username: username, nonce: nonce, result: '123', rows: 60, offset: 0, id: id };
+	var data = {
+		username: username,
+		nonce: nonce,
+		result: '123',
+		rows: 60,
+		offset: 0,
+		id: id
+	};
 	$.ajax({
-		url: url,
+		url: domain + op_urls[0],
 		type: 'get',
 		data: data,
 		success: function(res) {
 			if(res.statuscode == 200) {
 				switch(currentType) {
-					case 'car':
+					case 'itruck_truck_info':
 						$(".carManage").css('display', 'block');
 						$(".deviceManage").css('display', 'none');
+						$("#carManageForm").setFormValue(res.items[0]);
 						break;
-					case 'device':
+					case 'itruck_device_info':
 						$(".deviceManage").css('display', 'block');
 						$(".carManage").css('display', 'none');
+						$("#deviceManageForm").setFormValue(res.items[0]);
 						break;
 					default:
 						break;
 				}
 				$('.result').css('display', 'none');
 				$(".edit").css('display', 'block');
-				$("#" + currentType + "ManageForm").setFormValue(res.items[0]);
 			}
 		},
 		error: function(err) {
@@ -220,11 +292,16 @@ function editManage(id) {
 function searchByKey() {
 	var key = $(".search_condition").val();
 	var keyWord = $('.keyWord').val();
-	var url = getQueryUrl(currentType);
-	var data = { username: username, nonce: nonce, realm: realm, offset: 0, rows: 200 };
+	var data = {
+		username: username,
+		nonce: nonce,
+		realm: realm,
+		offset: 0,
+		rows: 200
+	};
 	data[key] = keyWord;
 	$.ajax({
-		url: url,
+		url: domain + op_urls[0],
 		type: 'get',
 		data: data,
 		success: function(res) {
@@ -238,15 +315,21 @@ function searchByKey() {
 	})
 }
 //查询
-function queryInfo(url,name) {
-//	loadSearchCondition(type); //装在下拉筛选条件
+function queryInfo() {
+	loadSearchCondition(); //装在下拉筛选条件
 	$.ajax({
-		url: domain+url,
+		url: domain + op_urls[0],
 		type: 'get',
-		data: { username: username, nonce: nonce, realm: realm, offset: 0, rows: 200 },
+		data: {
+			username: username,
+			nonce: nonce,
+			realm: realm,
+			offset: 0,
+			rows: 200
+		},
 		success: function(res) {
 			if(res.statuscode == 200) {
-				Table(res.items, name);
+				Table(res.items, currentType);
 			}
 		},
 		error: function(err) {
@@ -257,37 +340,55 @@ function queryInfo(url,name) {
 
 //删除
 function delManage(id) {
-	var url = getUpdateUrl(currentType);
-	$.ajax({
-		url: url,
-		type: 'post',
-		data: { username: username, nonce: nonce, realm: realm, id: id, result: '123', is_deleted: 1 },
-		success: function(res) {
-			if(res.statuscode == 0) {
-				alert('删除成功');
-				queryInfo(currentType);
+	sweetAlert({
+		title: "你确定要删除？",
+		text: "",
+		type: "warning",
+		showCancelButton: true,
+		confirmButtonColor: "#DD6B55",
+		cancelButtonText: '取消',
+		confirmButtonText: "删除",
+		closeOnConfirm: false
+	}, function() {
+		$.ajax({
+			url: domain + op_urls[1],
+			type: 'post',
+			data: {
+				username: username,
+				nonce: nonce,
+				realm: realm,
+				id: id,
+				result: '123',
+				is_deleted: 1
+			},
+			success: function(res) {
+				if(res.statuscode == 0) {
+					swal("删除成功", "", "success");
+					queryInfo();
+				}
+			},
+			error: function(err) {
+				swal(err, "", "success");
 			}
-		},
-		error: function(err) {
-			console.log(err);
-		}
-	})
+		})
+
+	});
+
 }
 
 //保存
 function save(type) {
-	var url = getUpdateUrl(type);
 	var data = $("#" + type + "ManageForm").serializeJson('result:"213123";username:' + username + ';nonce:' + nonce + ';id:' + currentEditId);
 	$.ajax({
-		url: url,
+		url: domain + op_urls[1],
 		type: 'post',
 		data: data,
 		success: function(res) {
 			if(res.statuscode == 0) {
-				alert('保存成功');
+				swal("保存成功", "", "success")
 				$('.result').css('display', 'block');
 				$('.edit').css('display', 'none');
-				queryInfo(currentType);
+				queryInfo();
 			}
 		}
 	});
@@ -307,9 +408,9 @@ function Table(data, type) {
 		case 'itruck_device_info':
 			deviceTable(data);
 			break;
-//		case 'system':
-//			systemTable(data);
-//			break;
+			//		case 'system':
+			//			systemTable(data);
+			//			break;
 		default:
 			break;
 	}
@@ -388,16 +489,20 @@ function deviceTable(data) {
 }
 
 function systemTable(data) {
-debugger;
-//	var str = '<tr><th>角色名称</th><td>测试</td></tr>';
-//	$('#Table').html('');
-//	$('#Table').append(str);
+	debugger;
+	//	var str = '<tr><th>角色名称</th><td>测试</td></tr>';
+	//	$('#Table').html('');
+	//	$('#Table').append(str);
 }
 //重置添加的参数
 function resetParams() {
 	currentEditId = '';
-	var a = $("#" + currentType + "ManageForm input")
+	var a = $("#carManageForm input")
 	$.each(a, function(name, object) {
+		$(object).val('')
+	});
+	var b = $("#deviceManageForm input")
+	$.each(b, function(name, object) {
 		$(object).val('')
 	});
 	$('.truck_state').val('0'); //
@@ -427,14 +532,14 @@ function getQueryUrl(type) {
 	}
 }
 //装在搜索类型
-function loadSearchCondition(type) {
+function loadSearchCondition() {
 	var str = '<option value="0">请选择</option>';
-	switch(type) {
-		case 'car':
+	switch(currentType) {
+		case 'itruck_truck_info':
 			for(var i = 0; i < condition.car.length; i++) {
 				str += '<option value="' + condition.car[i].code + '">' + condition.car[i].descr + '</option>'
 			}
-		case 'device':
+		case 'itruck_device_info':
 			for(var i = 0; i < condition.device.length; i++) {
 				str += '<option value="' + condition.device[i].code + '">' + condition.device[i].descr + '</option>'
 			}
